@@ -27,19 +27,20 @@ def draw_line_plot():
 
 def draw_bar_plot():
     # Copy and modify data for monthly bar plot
-    df_bar = df.copy()
+    df_bar = df
     df_bar.index = pd.to_datetime(df_bar.index)
     df_bar['year'] = df_bar.index.year
     df_bar['month'] = df_bar.index.strftime('%B')
-    monthAvg = df_bar.groupby(['year', 'month'])['value'].mean()
+    monthAvg = df_bar.groupby(['year', 'month'])['value'].mean().unstack()
 
     # Draw bar plot
     
     fig = plt.figure(figsize=(12,6))
-    monthAvg.plot(kind="bar")
+    monthAvg.plot(kind="bar", ax=plt.gca())
     plt.xlabel('Years')
     plt.ylabel('Average Page Views')
     plt.title('Monthly Average Page Views by Year')
+    plt.legend(title="Months", loc='upper left')
 
 
     # Save image and return fig (don't change this part)
@@ -53,18 +54,16 @@ def draw_box_plot():
     #Não sei o que fazer aqui... O código já pronto está dando problema
     df_box['year'] = [d.year for d in df_box.date]
     df_box['month'] = [d.strftime('%b') for d in df_box.date]
-    print(df_box)
     fig, axes = plt.subplots(1,2, figsize=(12,6))
     # Draw box plots (using Seaborn)
-   
     sns.boxplot(x='year', y='value', data=df_box, ax=axes[0])
     axes[0].set_title('Year-wise Box Plot (Trend)')
     axes[0].set_xlabel('Year')
     axes[0].set_ylabel('Page Views')
     sns.boxplot(x='month', y='value', data=df_box, ax=axes[1])
-    axes[0].set_title('Year-wise Box Plot (Trend)')
-    axes[0].set_xlabel('Month')
-    axes[0].set_ylabel('Page Views')
+    axes[1].set_title('Month-wise Box Plot (Seasonality)')
+    axes[1].set_xlabel('Month')
+    axes[1].set_ylabel('Page Views')
 
 
     # Save image and return fig (don't change this part)
